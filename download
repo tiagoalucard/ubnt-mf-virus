@@ -1,0 +1,23 @@
+#!/bin/sh
+per=/etc/persistent/.mf
+
+test -d /tmp/down || mkdir /tmp/down
+cd /tmp/down
+
+dwn() {
+ wget -O temp.ipk $1
+ tar -xzf temp.ipk
+ tar -xzf data.tar.gz
+ mv $2 $per
+ rm -rf /tmp/down/*
+}
+
+
+
+test -e $per/curl || dwn http://downloads.openwrt.org/kamikaze/8.09.1/adm5120/packages/curl_7.17.1-1_mips.ipk usr/bin/curl
+chmod +x $per/curl
+test -e $per/libcurl.so.4 || dwn http://downloads.openwrt.org/kamikaze/8.09.1/adm5120/packages/libcurl_7.17.1-1_mips.ipk usr/lib/libcurl.so.4.0.1
+mv $per/libcurl.so.4.0.1 $per/libcurl.so.4
+test -e $per/libssl.so.0.9.8 || dwn http://downloads.openwrt.org/kamikaze/8.09.1/adm5120/packages/libopenssl_0.9.8i-3.1_mips.ipk 'usr/lib/lib*'
+
+
